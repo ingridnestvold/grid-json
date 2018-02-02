@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="no">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Babushka</title>
+
+    <style>
+        .templatemodtager {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            margin: 0 auto;
+            grid-gap: 10px;
+            max-width: 1024px;
+        }
+
+
+        img {
+            max-width: 100%;
+        }
+
+        .menu {
+            border: 1px solid #666;
+            padding: 10px;
+        }
+
+        .menu:nth-child(odd) {
+            background: #ccc;
+        }
+
+        @media screen and (max-width:700px) {
+            .templatemodtager {
+                max-width: 100%;
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media screen and (max-width: 500px) {
+            .templatemodtager {
+                max-width: 100%;
+                grid-template-columns: repeat(1, 1fr);
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="templatemodtager"></div>
+
+    <template class="mytemplate"> 
+        
+        <div class="menu">
+        <h1 class="navn"></h1>
+        <img class="billede" src="" alt="">
+        <p class="pris"></p>
+        <p class="kategori"></p>
+        <p class="kortbeskrivelse"></p>
+        <p class="langbeskrivelse"></p>
+    </div>
+    </template>
+
+
+    <script>
+        let menu;
+
+        document.addEventListener("DOMContentLoaded", loadJson);
+
+        let modtager = document.querySelector(".templatemodtager");
+        let template = document.querySelector(".mytemplate");
+
+
+        async function loadJson() {
+            let minListe = await fetch("/json/menu.json");
+            menu = await minListe.json();
+            console.log(menu);
+
+            visMenu(menu);
+
+
+        }
+
+        function visMenu(menu) {
+
+            menu.forEach(hverRet => {
+                let klon = template.cloneNode(true).content;
+                klon.querySelector(".navn").textContent = hverRet.navn
+                klon.querySelector(".billede").setAttribute("src", "imgs/small/" + hverRet.billede + "-sm.jpg")
+                klon.querySelector(".billede").alt = "billede af" + hverRet.billede;
+                klon.querySelector(".kategori").textContent = hverRet.navn + " " + hverRet.kortbeskrivelse;
+                klon.querySelector(".pris").textContent = "pris:" + " " + hverRet.pris + " " + "kr";
+                klon.querySelector(".kortbeskrivelse").textContent = hverRet.kortbeskrivelse;
+                klon.querySelector(".langbeskrivelse").textContent = hverRet.langbeskrivelse;
+
+                modtager.appendChild(klon);
+            })
+
+
+        }
+    </script>
+</body>
+
+</html>
